@@ -57,31 +57,82 @@ resource "aws_iam_role" "glue_role" {
   })
 }
 
+# resource "aws_iam_policy" "glue_policy" {
+#     name = "glue-crawler-policy"
+#     policy = jsonencode({
+#         Version = "2012-10-17"
+#         Statement = [
+#             {
+#                 Effect = "Allow"
+#                 Action = ["S3.GetObject", "S3.ListBucket"]
+#                 Resource = [
+#                     var.curated_bucket_arn, 
+#                     "${var.curated_bucket_arn}/*"
+#                 ]
+#             },
+#             {
+#                 Effect = "Allow"
+#                 Action = [
+#                     "glue:GetDatabase",
+#                     "glue:GetDatabases",
+#                     "glue:UpdateDatabase",
+
+#                     "glue:CreateTable",
+#                     "glue:GetTable",
+#                     "glue:GetTables",
+#                     "glue:UpdateTable",
+
+#                     "glue:GetCrawler",
+#                     "glue:CreateCrawler",
+#                     "glue:StartCrawler",
+#                     "glue:UpdateCrawler"
+#                 ]
+#             Resource = "*"
+#             }
+#         ]
+#     })
+# }
 resource "aws_iam_policy" "glue_policy" {
-    name = "glue-crawler-policy"
-    policy = jsonencode({
-        Version = "2012-10-17"
-        Statement = [
-            {
-                Effect = "Allow"
-                Action = ["S3.GetObject", "S3.ListBucket"]
-                Resource = [
-                    var.curated_bucket_arn, 
-                    "${var.curated_bucket_arn}/*"
-                ]
-            },
-            {
-                Effect = "Allow"
-                Action = [
-                    "glue:*Database",
-                    "glue:*Table",
-                    "glue:GetCrawler",
-                    "glue:StartCrawler"
-                ]
-            Resource = "*"
-            }
+  name = "glue-crawler-policy"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "S3ReadCuratedData"
+        Effect = "Allow"
+        Action = [
+          "s3:GetObject",
+          "s3:ListBucket"
         ]
-    })
+        Resource = [
+          var.curated_bucket_arn,
+          "${var.curated_bucket_arn}/*"
+        ]
+      },
+      {
+        Sid    = "GlueCatalogAccess"
+        Effect = "Allow"
+        Action = [
+          "glue:GetDatabase",
+          "glue:GetDatabases",
+          "glue:CreateDatabase",
+          "glue:UpdateDatabase",
+
+          "glue:GetTable",
+          "glue:GetTables",
+          "glue:CreateTable",
+          "glue:UpdateTable",
+
+          "glue:GetCrawler",
+          "glue:CreateCrawler",
+          "glue:UpdateCrawler",
+          "glue:StartCrawler"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
 }
 
 
