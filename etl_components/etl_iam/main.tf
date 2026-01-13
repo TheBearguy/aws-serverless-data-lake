@@ -114,20 +114,42 @@ resource "aws_iam_policy" "glue_policy" {
         Sid    = "GlueCatalogAccess"
         Effect = "Allow"
         Action = [
+          # Databases
           "glue:GetDatabase",
           "glue:GetDatabases",
           "glue:CreateDatabase",
           "glue:UpdateDatabase",
 
+          # Tables
           "glue:GetTable",
           "glue:GetTables",
           "glue:CreateTable",
           "glue:UpdateTable",
 
+          # Partitions (ALL required)
+          "glue:GetPartition",
+          "glue:GetPartitions",
+          "glue:BatchGetPartition",
+          "glue:CreatePartition",
+          "glue:UpdatePartition",
+          "glue:BatchCreatePartition",
+
+          # Crawler control
           "glue:GetCrawler",
           "glue:CreateCrawler",
           "glue:UpdateCrawler",
           "glue:StartCrawler"
+        ]
+        Resource = "*"
+      }, 
+      # CloudWatch Logs (THIS WAS MISSING)
+      {
+        Sid    = "GlueCrawlerLogs"
+        Effect = "Allow"
+        Action = [
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
         ]
         Resource = "*"
       }
