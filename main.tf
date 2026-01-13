@@ -32,8 +32,8 @@ module "etl_lambda" {
     source = "./etl_components/etl_lambda"
     lambda_name   = "${var.project_name}-etl"
     role_arn      = module.iam.lambda_role_arn
-    handler       = "flatten.py"
-    package_path  = "lambda_handler_zip.zip"
+    handler       = "flatten.lambda_handler"
+    package_path  = "etl.zip"
 
     raw_bucket_name     = module.raw_bucket.bucket_name
     curated_bucket_name = module.curated_bucket.bucket_name
@@ -57,7 +57,7 @@ resource "aws_s3_bucket_notification" "raw_to_lambda" {
     lambda_function {
       lambda_function_arn = module.etl_lambda.lambda_arn
       events = ["s3:ObjectCreated:*"]
-      filter_prefix = "incoming/"
+      filter_prefix = ""
         filter_suffix = ".json"
     }
 

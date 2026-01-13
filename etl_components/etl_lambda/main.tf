@@ -16,10 +16,10 @@ resource "aws_lambda_function" "this" {
 
     environment {
         variables = {
-        RAW_BUCKET      = var.raw_bucket_name
-        CURATED_BUCKET  = var.curated_bucket_name
-        CURATED_PREFIX  = var.curated_prefix
-        SCHEMA_VERSION  = var.schema_version
+            RAW_BUCKET      = var.raw_bucket_name
+            CURATED_BUCKET  = var.curated_bucket_name
+            CURATED_PREFIX  = var.curated_prefix
+            SCHEMA_VERSION  = var.schema_version
         }
     }
     depends_on = [
@@ -33,3 +33,4 @@ resource "aws_lambda_permission" "allow_s3_invoke" {
     function_name = aws_lambda_function.this.function_name
     principal = "s3.amazonaws.com"
 }
+
