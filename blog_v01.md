@@ -1,4 +1,4 @@
-# Building a Serverless Data Lake on AWS — A Terraform-First, Failure-Driven Journey
+# Building a Serverless Data Lake on AWS - A Terraform-First, Failure-Driven Journey
 
 ---
 
@@ -8,7 +8,7 @@
 
 This project didn't start with "let's build a data lake."
 
-It started with: **"I want to understand Terraform deeply—state management, module architecture, resource ownership, and failure modes—in a real production-grade system."**
+It started with: **"I want to understand Terraform deeply-state management, module architecture, resource ownership, and failure modes in a real production-grade system."**
 
 A serverless data lake became the perfect learning vehicle. Not because it's trendy or because "serverless" is a buzzword, but because it forces you to confront almost every hard Terraform problem early:
 
@@ -45,7 +45,7 @@ Early in this project, I made a fundamental mistake. I was thinking about the sy
 
 > "When a JSON file lands in S3, trigger Lambda to transform it, then Glue catalogs it, then Athena queries it."
 
-This mental model seems intuitive. It's how most tutorials frame data ingestion systems. But in practice, it's wrong—or at least incomplete.
+This mental model seems intuitive. It's how most tutorials frame data ingestion systems. But in practice, it's wrong or at least incomplete.
 
 The problem with "pipeline thinking" is that it treats every component as a step in a sequence, where each step depends on the previous one working perfectly. When something breaks (and it will), you're left debugging a tangled web of implicit dependencies.
 
@@ -117,7 +117,7 @@ Here's the data flow:
 
 #### AWS Services Used
 
-- **Amazon S3**: Two buckets—raw (immutable JSON) and curated (processed Parquet)
+- **Amazon S3**: Two buckets raw (immutable JSON) and curated (processed Parquet)
 - **AWS Lambda**: Stateless ETL function triggered by S3 events
 - **AWS Glue**: Managed metadata catalog and schema discovery via crawlers
 - **Amazon Athena**: Serverless SQL query engine
@@ -139,7 +139,7 @@ Lambda charges per invocation and execution time. Athena charges per byte scanne
 The system is reactive. Nothing runs unless data arrives. No polling. No scheduled jobs checking for work.
 
 **Fully declarative:**  
-Everything—buckets, functions, roles, permissions, catalog tables—is defined in Terraform. No manual configuration. No ClickOps.
+Everything buckets, functions, roles, permissions, catalog tables is defined in Terraform. No manual configuration. No ClickOps.
 
 This architecture is great for learning because it's **simple enough to understand** but **complex enough to expose real Terraform challenges**.
 
@@ -149,7 +149,7 @@ This architecture is great for learning because it's **simple enough to understa
 
 ### 4. Module Design Philosophy
 
-One of the most important decisions I made early on—and then had to redo after failing—was how to structure Terraform modules.
+One of the most important decisions I made early on and then had to redo after failing was how to structure Terraform modules.
 
 #### Why Everything Became a Module
 
@@ -381,7 +381,7 @@ This was my "oh shit" moment with Terraform state.
 If Terraform created it, only Terraform should modify or destroy it. Breaking this rule creates state drift.
 
 **Lesson 2: `terraform refresh` is not a magic fix**  
-Running `terraform refresh` updates the state file to match AWS reality, but only if Terraform can successfully query the resource. If a resource is gone, Terraform doesn't detect that during refresh—it just fails silently.
+Running `terraform refresh` updates the state file to match AWS reality, but only if Terraform can successfully query the resource. If a resource is gone, Terraform doesn't detect that during refresh it just fails silently.
 
 **Lesson 3: `terraform state rm` is a recovery tool**  
 When state drift happens (because you screwed up and deleted something manually), you have two options:
@@ -403,7 +403,7 @@ If you're regularly experiencing state drift, something is wrong with your workf
 - Your Terraform config doesn't fully own the resources it thinks it does
 - You're mixing Terraform with other automation tools without proper coordination
 
-In my case, the culprit was me. I was the one breaking the contract. The fix wasn't technical—it was discipline.
+In my case, the culprit was me. I was the one breaking the contract. The fix wasn't technical it was discipline.
 
 #### Current State Setup
 
@@ -452,7 +452,7 @@ But for learning? Single local state is fine. Overengineering state management b
 
 ### 7. IAM as Architectural Boundaries
 
-IAM was the most frustrating—and most educational—part of this project.
+IAM was the most frustrating and most educational part of this project.
 
 I came in thinking: "IAM is just permissions. Grant access, move on."
 
@@ -659,7 +659,7 @@ Often, the answer is no. And that's a good thing. Tight IAM boundaries make syst
 
 ### 8. S3 Storage Design
 
-S3 is the foundation of this entire system. Everything else—Lambda, Glue, Athena—reads from or writes to S3. Getting the storage design right was critical.
+S3 is the foundation of this entire system. Everything else Lambda, Glue, Athena reads from or writes to S3. Getting the storage design right was critical.
 
 #### Raw vs. Curated Bucket Separation
 
@@ -839,12 +839,6 @@ Notice:
 
 #### Packaging Discipline: Terraform
 
-<invoke name="artifacts">
-<parameter name="command">update</parameter>
-<parameter name="id">terraform_data_lake_blog</parameter>
-<parameter name="old_str">#### Packaging Discipline: Terraform</parameter>
-<parameter name="new_str">#### Packaging Discipline: Terraform Doesn't Build Code
-
 One critical lesson I learned: **Terraform deploys artifacts. It does not build them.**
 
 Early on, I kept hitting Lambda deployment issues:
@@ -884,7 +878,7 @@ This makes Parquet correctness **critical**.
 
 ### 11. Glue Crawlers: Schema Discovery
 
-Glue crawlers are powerful but dangerous. They automate schema inference, which sounds great—until it silently produces the wrong schema.
+Glue crawlers are powerful but dangerous. They automate schema inference, which sounds great until it silently produces the wrong schema.
 
 #### What Glue Crawlers Actually Do
 
@@ -937,7 +931,7 @@ Athena is the final piece. It's a serverless SQL query engine that reads from th
 
 #### Athena Is a Consumer, Not a Healer
 
-Athena worked almost immediately—**after everything upstream was correct**.
+Athena worked almost immediately **after everything upstream was correct**.
 
 That itself was instructive:
 
@@ -1440,11 +1434,11 @@ One of the most important meta-lessons from this project:
 YouTube videos gave me the initial mental model:
 - "Here's how S3 events work"
 - "This is what a Lambda handler looks like"
-- "Glue crawlers are easy—just attach this managed policy!"
+- "Glue crawlers are easy just attach this managed policy!"
 
 They were great for understanding the **shape** of the solution.
 
-But every hard bug—IAM permissions, handler naming, Parquet schema mismatches—was only solvable by reading AWS documentation carefully.
+But every hard bug IAM permissions, handler naming, Parquet schema mismatches was only solvable by reading AWS documentation carefully.
 
 #### Why Documentation and AI Won
 
@@ -1474,7 +1468,7 @@ They're great for exploration. They're insufficient for correctness.
 
 **Read the boring stuff.**
 
-The least exciting part of AWS documentation—IAM actions, resource ARNs, required parameters—is the most critical.
+The least exciting part of AWS documentation IAM actions, resource ARNs, required parameters is the most critical.
 
 Terraform rewards this discipline because it's unforgiving of half-understood concepts.
 
@@ -1500,7 +1494,7 @@ This separation makes state predictable and debugging tractable.
 
 Terraform state is not a mirror of AWS reality. It's a **contract about what should exist**.
 
-When state drifts (because you deleted something manually), it's not a Terraform bug—it's a signal that you violated the contract.
+When state drifts (because you deleted something manually), it's not a Terraform bug it's a signal that you violated the contract.
 
 The fix isn't technical. It's disciplinary: **If Terraform created it, only Terraform modifies it.**
 
@@ -1560,11 +1554,11 @@ I can destroy and recreate the entire system without state drift. Modules own re
 ✅ **Failures are debuggable thanks to CloudWatch Logs**  
 IAM boundaries make errors traceable. CloudWatch Logs capture detailed failures. Parquet-tools validate file schemas. I know where to look when something breaks.
 
-The system works—but more importantly, **it makes sense**.
+The system works but more importantly, **it makes sense**.
 ---
 
 ### 21. Conclusion
 
-Terraform isn't just a provisioning tool. Used properly, it's a **design discipline**—one that forces clarity, punishes shortcuts, and rewards deliberate thinking.
+Terraform isn't just a provisioning tool. Used properly, it's a **design discipline** one that forces clarity, punishes shortcuts, and rewards deliberate thinking.
 
 *If you're early in your Terraform journey: this blog will be helpful because I build fewer smaller things, but understand them deeply.*</parameter>
